@@ -3,7 +3,7 @@ require 'date'
 require 'optparse'
 
 # コマンドラインオプション設定(デフォルト値は今日の年と月)
-params =ARGV.getopts("m:", "y:", "m:#{Date.today.mon}", "y:#{Date.today.year}")
+params = ARGV.getopts("m:", "y:", "m:#{Date.today.mon}", "y:#{Date.today.year}")
 input_month = params["m"].to_i
 input_year = params["y"].to_i
 
