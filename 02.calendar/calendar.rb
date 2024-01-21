@@ -34,4 +34,3 @@ calendar = margin_space + calendar_formatted
 
 # カレンダーを表示
 puts calendar.join(" ")
-
