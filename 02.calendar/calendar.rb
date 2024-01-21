@@ -15,8 +15,8 @@ puts header.center(20)
 puts "日 月 火 水 木 金 土"
 
 formatted_calendar = (start_date..end_date).map do |date|
-  day_to_string = date.day.to_s.rjust(2)
-  date.day != 1 && date.sunday? ? "\n" + day_to_string : day_to_string
+  day = date.day.to_s.rjust(2)
+  date.day != 1 && date.sunday? ? "\n" + day : day
 end
 
 margin_space = Array.new(start_date.wday, "  ")
