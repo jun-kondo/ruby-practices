@@ -19,21 +19,16 @@ shots.each_slice(2) do |s|
   frames << s
 end
 
-# ストライクの後の2投分のスコア計算をする
-# スコア配列とインデックスを引数で受け取る
 def strike_bonus(frames, index)
   next_frame = frames[index + 1]
-  # 次の投球もストライクだった場合、さらに次のフレームの一投目のスコアも加算
   if next_frame[0] == 10
     after_next_frame = frames[index + 2]
     next_frame[0] + after_next_frame[0]
-  else # スペア、それ以外の場合
+  else
     next_frame.sum
   end
 end
 
-# スペアの後の次の投球分のスコア計算をする
-# スコア配列とインデックスを引数で受け取る
 def spare_bonus(frames, index)
   next_frame = frames[index + 1]
   next_frame[0]
@@ -51,10 +46,9 @@ def culc_score(frames)
     else
       point += frame.sum
     end
-    # 10フレーム目で終了しループから抜ける
     break if index == 9
   end
-  point
+  puts point
 end
 
-puts culc_score(frames)
+culc_score(frames)
