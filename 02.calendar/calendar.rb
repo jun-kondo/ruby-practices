@@ -21,16 +21,13 @@ puts "日 月 火 水 木 金 土"
 
 margin_space = Array.new(start_date.wday, "  ")
 
-# すべての日付を配列で作成
-all_days = (start_date.day..end_date.day).to_a
 
 # 配列の要素を文字列型に変更、各要素を右寄せ
 # 1日ではないかつ、日曜日の日付の場合日付の前に改行文字を入れて改行
-calendar_formatted = all_days.map do |day|
-                       date = Date.new(start_date.year, start_date.mon, day)
-                       day_to_string = day.to_s.rjust(2)
-                       date.day != 1 && date.sunday? ? "\n" + day_to_string : day_to_string
-                     end
+calendar_formatted = (start_date..end_date).map do |date|
+  day_to_string = date.day.to_s.rjust(2)
+  date.day != 1 && date.sunday? ? "\n" + day_to_string : day_to_string
+end
 
 # 余白と日付の配列を連結
 calendar = margin_space + calendar_formatted
