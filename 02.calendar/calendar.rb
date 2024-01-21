@@ -28,7 +28,8 @@ all_days = (start_date.day..end_date.day).to_a
 # 1日ではないかつ、日曜日の日付の場合日付の前に改行文字を入れて改行
 calendar_formatted = all_days.map do |day|
                        date = Date.new(start_date.year, start_date.mon, day)
-                       day != 1 && date.sunday? ? "\n" + day.to_s.rjust(2) : day.to_s.rjust(2)
+                       day_to_string = day.to_s.rjust(2)
+                       date.day != 1 && date.sunday? ? "\n" + day_to_string : day_to_string
                      end
 
 # 余白と日付の配列を連結
