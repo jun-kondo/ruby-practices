@@ -14,12 +14,12 @@ puts header.center(20)
 
 puts "日 月 火 水 木 金 土"
 
-formatted_calendar = (start_date..end_date).map do |date|
+formatted_days = (start_date..end_date).map do |date|
   day = date.day.to_s.rjust(2)
   date.day != 1 && date.sunday? ? "\n" + day : day
 end
 
 margin = Array.new(start_date.wday, "  ")
 
-calendar = margin + formatted_calendar
+calendar = margin + formatted_days
 puts calendar.join(" ")
