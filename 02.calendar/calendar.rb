@@ -17,7 +17,7 @@ end_date = Date.new(year, month, -1)
 header = "#{start_date.mon}月 #{start_date.year}"
 puts header.center(20)
 # すべての曜日を取得
-week_days = ["日", "月", "火", "水", "木", "金", "土"]
+puts "日 月 火 水 木 金 土"
 
 # カレンダーの最初の日までの余白を配列で作成
 margin_space = []
@@ -39,5 +39,5 @@ calendar_formatted = all_days.map do |day|
 calendar = margin_space + calendar_formatted
 
 # カレンダーを表示
-puts week_days.join(" "), calendar.join(" ")
+puts calendar.join(" ")
 
