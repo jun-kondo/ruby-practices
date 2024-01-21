@@ -11,7 +11,7 @@ year = params["y"].to_i
 start_date = Date.new(year, month, 1)
 
 # 月の最終日を取得
-end_date = Date.new(start_date.year, start_date.mon, -1)
+end_date = Date.new(year, month, -1)
 
 # 月と年を取得
 header = "#{start_date.mon}月 #{start_date.year}"
