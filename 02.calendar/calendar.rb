@@ -9,7 +9,7 @@ year = params["y"].to_i
 start_date = Date.new(year, month, 1)
 end_date = Date.new(year, month, -1)
 
-header = "#{start_date.mon}月 #{start_date.year}"
+header = "#{month}月 #{year}"
 puts header.center(20)
 
 puts "日 月 火 水 木 金 土"
