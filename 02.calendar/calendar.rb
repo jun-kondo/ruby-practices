@@ -4,11 +4,11 @@ require 'optparse'
 
 # コマンドラインオプション設定(デフォルト値は今日の年と月)
 params = ARGV.getopts("m:", "y:", "m:#{Date.today.mon}", "y:#{Date.today.year}")
-input_month = params["m"].to_i
-input_year = params["y"].to_i
+month = params["m"].to_i
+year = params["y"].to_i
 
 # 月の最初の日にちを取得
-start_date = Date.new(input_year, input_month, 1)
+start_date = Date.new(year, month, 1)
 
 # 月の最終日を取得
 end_date = Date.new(start_date.year, start_date.mon, -1)
