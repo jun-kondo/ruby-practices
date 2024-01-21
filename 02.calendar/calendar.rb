@@ -15,7 +15,7 @@ end_date = Date.new(year, month, -1)
 
 # 月と年を取得
 header = "#{start_date.mon}月 #{start_date.year}"
-
+puts header.center(20)
 # すべての曜日を取得
 week_days = ["日", "月", "火", "水", "木", "金", "土"]
 
@@ -39,5 +39,5 @@ calendar_formatted = all_days.map do |day|
 calendar = margin_space + calendar_formatted
 
 # カレンダーを表示
-puts header.center(20), week_days.join(" "), calendar.join(" ")
+puts week_days.join(" "), calendar.join(" ")
 
