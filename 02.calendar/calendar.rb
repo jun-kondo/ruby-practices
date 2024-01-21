@@ -19,11 +19,7 @@ puts header.center(20)
 # すべての曜日を取得
 puts "日 月 火 水 木 金 土"
 
-# カレンダーの最初の日までの余白を配列で作成
-margin_space = []
-start_date.wday.times do
-  margin_space.unshift("  ")
-end
+margin_space = Array.new(start_date.wday, "  ")
 
 # すべての日付を配列で作成
 all_days = (start_date.day..end_date.day).to_a
