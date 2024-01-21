@@ -19,7 +19,7 @@ formatted_calendar = (start_date..end_date).map do |date|
   date.day != 1 && date.sunday? ? "\n" + day : day
 end
 
-margin_space = Array.new(start_date.wday, "  ")
+margin = Array.new(start_date.wday, "  ")
 
-calendar = margin_space + formatted_calendar
+calendar = margin + formatted_calendar
 puts calendar.join(" ")
