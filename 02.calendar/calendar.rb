@@ -16,10 +16,9 @@ puts "日 月 火 水 木 金 土"
 
 formatted_days = (start_date..end_date).map do |date|
   day = date.day.to_s.rjust(2)
-  date.day != 1 && date.sunday? ? "\n" + day : day
+  date.saturday? ? day + "\n" : day + " "
 end
-
-margin = Array.new(start_date.wday, "  ")
+margin = Array.new(start_date.wday, "   ")
 
 calendar = margin + formatted_days
-puts calendar.join(" ")
+puts calendar.join
