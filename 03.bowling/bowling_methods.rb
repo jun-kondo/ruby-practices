@@ -2,7 +2,7 @@
 
 def strike_bonus(frames, index)
   if frames[index + 1][0] == 10
-    frames[index + 1][0] + frames[index + 2][0]
+    frames[index + 2][0] + 10
   else
     frames[index + 1].sum
   end
