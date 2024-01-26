@@ -16,6 +16,7 @@ puts "日 月 火 水 木 金 土"
 
 formatted_days = (start_date..end_date).map do |date|
   day = date.day.to_s.rjust(2)
+  day = "\e[7m#{day}\e[0m" if date == Date.today
   day + (date.saturday? ? "\n" : " ")
 end
 
