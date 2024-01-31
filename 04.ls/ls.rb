@@ -3,11 +3,8 @@
 
 def main
   filenames = Dir.glob('*')
-
   arranged_filenames = arrange_filenames(filenames)
-
   filenames_matrix = create_filenames_matrix(arranged_filenames)
-
   output(filenames_matrix)
 end
 
