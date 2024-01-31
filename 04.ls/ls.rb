@@ -31,8 +31,11 @@ def create_file_names_lists(arranged_names, col: 3)
   arranged_names.each_slice(row).map { |divided_names| divided_names + Array.new((row - divided_names.size), '') }.transpose
 end
 
-def output(names_lists)
-  names_lists.each { |names_list| names_list.each { |name| name == names_list.last ? puts(name) : print(name) } }
+def output(filenames_matrix)
+  filenames_matrix.each do |filenames|
+    filenames.each { |filename| print filename }
+    puts
+  end
 end
 
 main
