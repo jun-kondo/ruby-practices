@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 def main
-  file_names = Dir.glob('*').map { |file| File.basename(file) }
+  file_names = Dir.glob('*')
 
   arranged_file_names = arrange_names(file_names)
 
