@@ -2,20 +2,20 @@
 # frozen_string_literal: true
 
 def main
-  file_names = Dir.glob('*')
+  filenames = Dir.glob('*')
 
-  arranged_file_names = arrange_names(file_names)
+  arranged_filenames = arrange_filenames(filenames)
 
-  file_names_lists = create_file_names_lists(arranged_file_names)
+  filenames_matrix = create_filenames_matrix(arranged_filenames)
 
-  output(file_names_lists)
+  output(filenames_matrix)
 end
 
 def display_file_width(str)
   str.size + str.chars.count { |char| !char.ascii_only? }
 end
 
-def arrange_names(names)
+def arrange_filenames(names)
   max_word = names.max_by { |a| display_file_width(a) }
   names.sort.map do |name|
     if name.ascii_only?
@@ -26,7 +26,7 @@ def arrange_names(names)
   end
 end
 
-def create_file_names_lists(arranged_names, col: 3)
+def create_filenames_matrix(arranged_names, col: 3)
   row = arranged_names.size <= col ? 1 : arranged_names.size / col + 1
   arranged_names.each_slice(row).map { |divided_names| divided_names + Array.new((row - divided_names.size), '') }.transpose
 end
