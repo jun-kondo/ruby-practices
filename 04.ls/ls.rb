@@ -11,15 +11,15 @@ def main
   output(file_names_lists)
 end
 
-def width(str)
+def display_file_width(str)
   str.size + str.chars.count { |char| !char.ascii_only? }
 end
 
 def arrange_names(names)
-  max_word = names.max { |a, b| width(a) <=> width(b) }
+  max_word = names.max { |a, b| display_file_width(a) <=> display_file_width(b) }
   names.sort.map do |name|
     if name.ascii_only?
-      name.ljust(width(max_word) + 1)
+      name.ljust(display_file_width(max_word) + 1)
     else
       name.ljust(max_word.size + 1)
     end
