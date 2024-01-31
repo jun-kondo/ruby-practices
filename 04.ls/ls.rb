@@ -6,7 +6,7 @@ def main
 
   arranged_file_names = arrange_names(file_names)
 
-  file_names_lists = create_lists(arranged_file_names)
+  file_names_lists = create_file_names_lists(arranged_file_names)
 
   output(file_names_lists)
 end
@@ -26,7 +26,7 @@ def arrange_names(names)
   end
 end
 
-def create_lists(arranged_names, col: 3)
+def create_file_names_lists(arranged_names, col: 3)
   row = arranged_names.size <= col ? 1 : arranged_names.size / col + 1
   arranged_names.each_slice(row).map { |divided_names| divided_names + Array.new((row - divided_names.size), '') }.transpose
 end
