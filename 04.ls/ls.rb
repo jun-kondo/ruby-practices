@@ -12,15 +12,15 @@ def display_file_width(str)
   str.size + str.chars.count { |char| !char.ascii_only? }
 end
 
+def mb_ljust(max_word_width, filename, padding: ' ', padding_size: 1)
+  padding_size += max_word_width - display_file_width(filename)
+  filename + padding * padding_size
+end
+
 def arrange_filenames(names)
   max_word = names.max_by { |a| display_file_width(a) }
-  names.map do |name|
-    if name.ascii_only?
-      name.ljust(display_file_width(max_word) + 1)
-    else
-      name.ljust(max_word.size + 1)
-    end
-  end
+  max_word_width = display_file_width(max_word)
+  names.map { |name| mb_ljust(max_word_width, name) }
 end
 
 def create_filenames_matrix(arranged_names, col: 3)
