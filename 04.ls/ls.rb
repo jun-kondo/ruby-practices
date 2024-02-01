@@ -14,7 +14,7 @@ end
 
 def arrange_filenames(names)
   max_word = names.max_by { |a| display_file_width(a) }
-  names.sort.map do |name|
+  names.map do |name|
     if name.ascii_only?
       name.ljust(display_file_width(max_word) + 1)
     else
