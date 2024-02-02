@@ -1,8 +1,15 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'optparse'
+
 def main
-  filenames = Dir.glob('*')
+  options = ARGV.getopts('a')
+  filenames = if options['a']
+                Dir.glob('*', File::FNM_DOTMATCH)
+              else
+                Dir.glob('*')
+              end
   arranged_filenames = arrange_filenames(filenames)
   filenames_matrix = create_filenames_matrix(arranged_filenames)
   output(filenames_matrix)
