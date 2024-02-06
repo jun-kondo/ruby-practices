@@ -4,9 +4,9 @@
 require 'optparse'
 
 def main
-  options = ARGV.getopts('a')
+  options = ARGV.getopts('a', 'r')
   flags = options['a'] ? File::FNM_DOTMATCH : 0
-  filenames = Dir.glob('*', flags)
+  filenames = options['r'] ? Dir.glob('*', flags).reverse : Dir.glob('*', flags)
   arranged_filenames = arrange_filenames(filenames)
   filenames_matrix = create_filenames_matrix(arranged_filenames)
   output(filenames_matrix)
