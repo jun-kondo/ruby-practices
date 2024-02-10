@@ -3,10 +3,16 @@
 
 require 'optparse'
 
-def main
-  options = ARGV.getopts('a')
-  flags = options['a'] ? File::FNM_DOTMATCH : 0
+def list_filenames(flags, options)
   filenames = Dir.glob('*', flags)
+  filenames.reverse! if options['r']
+  filenames
+end
+
+def main
+  options = ARGV.getopts('ar')
+  flags = options['a'] ? File::FNM_DOTMATCH : 0
+  filenames = list_filenames(flags, options)
   arranged_filenames = arrange_filenames(filenames)
   filenames_matrix = create_filenames_matrix(arranged_filenames)
   output(filenames_matrix)
