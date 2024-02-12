@@ -10,12 +10,10 @@ def list_filenames(flags, options)
 end
 
 def main
-  options = ARGV.getopts('ar')
+  options = ARGV.getopts('arl')
   flags = options['a'] ? File::FNM_DOTMATCH : 0
   filenames = list_filenames(flags, options)
-  arranged_filenames = arrange_filenames(filenames)
-  filenames_matrix = create_filenames_matrix(arranged_filenames)
-  output(filenames_matrix)
+  options['l'] ? long_listing(filenames) : short_listing(filenames)
 end
 
 def display_file_width(str)
@@ -38,11 +36,10 @@ def create_filenames_matrix(arranged_names, col: 3)
   arranged_names.each_slice(row).map { |divided_names| divided_names + Array.new((row - divided_names.size), '') }.transpose
 end
 
-def output(filenames_matrix)
-  filenames_matrix.each do |filenames|
-    filenames.each { |filename| print filename }
-    puts
-  end
+def short_listing(filenames)
+  arranged_filenames = arrange_filenames(filenames)
+  filenames_matrix = create_filenames_matrix(arranged_filenames)
+  filenames_matrix.map(&:join).join("\n")
 end
 
-main
+puts main
