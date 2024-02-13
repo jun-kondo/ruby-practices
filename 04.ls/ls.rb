@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'etc'
+require 'date'
 
 def list_filenames(flags, options)
   filenames = Dir.glob('*', flags)
@@ -40,6 +42,118 @@ def short_listing(filenames)
   arranged_filenames = arrange_filenames(filenames)
   filenames_matrix = create_filenames_matrix(arranged_filenames)
   filenames_matrix.map(&:join).join("\n")
+end
+
+def long_listing(filenames)
+  file_stats = filenames.map do |filename|
+    { name: filename, stat: File.lstat(filename) }
+  end
+  stats = file_stats.map { |file| file[:stat] }
+  max_sizes = check_max_stat_sizes(stats)
+  long_list = generate_body(file_stats, max_sizes)
+  total_block_number = stats.map(&:blocks).inject { |total, block| total + block }
+  total_block = "total #{total_block_number}"
+  [total_block, long_list].join("\n")
+end
+
+def check_file_type(type)
+  {
+    'fifo' => 'p',
+    'characterSpecial' => 'c',
+    'directory' => 'd',
+    'blockSpecial' => 'b',
+    'file' => '-',
+    'link' => 'l',
+    'socket' => 's'
+  }[type]
+end
+
+def output_normal_permission(permission_number)
+  {
+    '7' => 'rwx',
+    '6' => 'rw-',
+    '5' => 'r-x',
+    '4' => 'r--',
+    '3' => '-wx',
+    '2' => '-w-',
+    '1' => '--x',
+    '0' => '---'
+  }[permission_number]
+end
+
+def owner_and_group_permission(set_id, permission_number)
+  if set_id
+    {
+      '7' => 'rws',
+      '6' => 'rwS',
+      '5' => 'r-s',
+      '4' => 'r-S',
+      '3' => '-ws',
+      '2' => '-wS',
+      '1' => '--s',
+      '0' => '---'
+    }[permission_number]
+  else
+    output_normal_permission(permission_number)
+  end
+end
+
+def other_users_permission(sticky, permission_number)
+  if sticky
+    {
+      '7' => 'rwt',
+      '6' => 'rwT',
+      '5' => 'r-t',
+      '4' => 'r-T',
+      '3' => '-wt',
+      '2' => '-wT',
+      '1' => '--t',
+      '0' => '---'
+    }[permission_number]
+  else
+    output_normal_permission(permission_number)
+  end
+end
+
+def check_max_stat_sizes(stats)
+  max_size_owner = stats.max_by { |s| Etc.getpwuid(s.uid).name.size }
+  max_size_group = stats.max_by { |s| Etc.getgrgid(s.gid).name.size }
+  {
+    max_nlink_size: stats.max_by { |s| s.nlink.to_s.size }.nlink.to_s.size,
+    max_file_size: stats.max_by(&:size).size.to_s.size,
+    max_size_owner_size: Etc.getpwuid(max_size_owner.uid).name.size,
+    max_size_group_size: Etc.getgrgid(max_size_group.gid).name.size
+  }
+end
+
+def generate_body(file_stats, max_sizes)
+  file_stats.map do |file|
+    file_mode_number = file[:stat].mode.to_s(8).slice(-3, 3)
+    [
+      [
+        check_file_type(file[:stat].ftype),
+        owner_and_group_permission(file[:stat].setuid?, file_mode_number[0]),
+        owner_and_group_permission(file[:stat].setgid?, file_mode_number[1]),
+        other_users_permission(file[:stat].sticky?, file_mode_number[2])
+      ].join,
+      file[:stat].nlink.to_s.rjust(max_sizes[:max_nlink_size] + 1),
+      Etc.getpwuid(file[:stat].uid).name.ljust(max_sizes[:max_size_owner_size] + 1),
+      Etc.getgrgid(file[:stat].gid).name.ljust(max_sizes[:max_size_group_size] + 1),
+      file[:stat].size.to_s.rjust(max_sizes[:max_file_size]),
+      show_date_modified(file[:stat]),
+      file[:name],
+      show_symlink(file[:name])
+    ].join(' ').rstrip
+  end
+end
+
+def show_date_modified(stat)
+  date_modified = stat.mtime
+  Date.parse(date_modified.to_s) < Date.today << 6 ? date_modified.strftime('%_m %_d %_5Y') : date_modified.strftime('%_m %_d %H:%M')
+end
+
+def show_symlink(filename)
+  "-> #{File.readlink(filename)}" if FileTest.symlink?(filename)
 end
 
 puts main
