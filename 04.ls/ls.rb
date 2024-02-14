@@ -68,7 +68,7 @@ def check_file_type(type)
   }[type]
 end
 
-def output_normal_permission(permission_number)
+PERMISSION =
   {
     '7' => 'rwx',
     '6' => 'rw-',
@@ -78,40 +78,31 @@ def output_normal_permission(permission_number)
     '2' => '-w-',
     '1' => '--x',
     '0' => '---'
-  }[permission_number]
+  }.freeze
+
+def output_normal_permission(permission_number)
+  PERMISSION[permission_number]
 end
 
 def owner_and_group_permission(set_id, permission_number)
-  if set_id
-    {
-      '7' => 'rws',
-      '6' => 'rwS',
-      '5' => 'r-s',
-      '4' => 'r-S',
-      '3' => '-ws',
-      '2' => '-wS',
-      '1' => '--s',
-      '0' => '---'
-    }[permission_number]
+  permission = output_normal_permission(permission_number)
+  if set_id && permission[2] == 'x'
+    permission.sub(/x/, 's')
+  elsif set_id
+    permission.sub(/-/, 'S')
   else
-    output_normal_permission(permission_number)
+    permission
   end
 end
 
 def other_users_permission(sticky, permission_number)
-  if sticky
-    {
-      '7' => 'rwt',
-      '6' => 'rwT',
-      '5' => 'r-t',
-      '4' => 'r-T',
-      '3' => '-wt',
-      '2' => '-wT',
-      '1' => '--t',
-      '0' => '---'
-    }[permission_number]
+  permission = output_normal_permission(permission_number)
+  if sticky && permission[2] == 'x'
+    permission.sub(/x/, 't')
+  elsif sticky
+    permission.sub(/-/, 'T')
   else
-    output_normal_permission(permission_number)
+    permission
   end
 end
 
