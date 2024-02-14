@@ -131,14 +131,14 @@ def generate_body(file_stats, max_sizes)
       Etc.getpwuid(file[:stat].uid).name.ljust(max_sizes[:max_size_owner_size] + 1),
       Etc.getgrgid(file[:stat].gid).name.ljust(max_sizes[:max_size_group_size] + 1),
       file[:stat].size.to_s.rjust(max_sizes[:max_file_size]),
-      show_date_modified(file[:stat]),
+      format_mtime(file[:stat]),
       file[:name],
       show_symlink(file[:name])
     ].join(' ').rstrip
   end
 end
 
-def show_date_modified(stat)
+def format_mtime(stat)
   date_modified = stat.mtime
   Date.parse(date_modified.to_s) < Date.today << 6 ? date_modified.strftime('%_m %_d %_5Y') : date_modified.strftime('%_m %_d %H:%M')
 end
