@@ -48,12 +48,31 @@ def long_listing(filenames)
   file_stats = filenames.map do |filename|
     { name: filename, stat: File.lstat(filename) }
   end
-  stats = file_stats.map { |file| file[:stat] }
-  max_sizes = check_max_stat_sizes(stats)
-  long_list = generate_body(file_stats, max_sizes)
-  total_block_number = stats.map(&:blocks).inject { |total, block| total + block }
+  elements = collect_elements(file_stats)
+  long_list = generate_body(elements)
+  total_block_number = elements.map { _1[:block] }.inject { |total, block| total + block }
   total_block = "total #{total_block_number}"
   [total_block, long_list].join("\n")
+end
+
+def collect_elements(file_stats)
+  file_stats.map do |file|
+    file_mode_number = file[:stat].mode.to_s(8).slice(-3, 3)
+    {
+      block: file[:stat].blocks,
+      file_type: check_file_type(file[:stat].ftype),
+      owner_permission: owner_and_group_permission(file[:stat].setuid?, file_mode_number[0]),
+      group_permission: owner_and_group_permission(file[:stat].setgid?, file_mode_number[1]),
+      other_users_permission: other_users_permission(file[:stat].sticky?, file_mode_number[2]),
+      hard_link: file[:stat].nlink.to_s,
+      uid: Etc.getpwuid(file[:stat].uid).name,
+      gid: Etc.getgrgid(file[:stat].gid).name,
+      size: file[:stat].size.to_s,
+      mtime: format_mtime(file[:stat]),
+      name: file[:name],
+      symlink: show_symlink(file[:name])
+    }
+  end
 end
 
 def check_file_type(type)
@@ -117,23 +136,28 @@ def check_max_stat_sizes(stats)
   }
 end
 
-def generate_body(file_stats, max_sizes)
-  file_stats.map do |file|
-    file_mode_number = file[:stat].mode.to_s(8).slice(-3, 3)
+def check_max_length(element)
+  element.max_by(&:length).length
+end
+
+def generate_body(elements)
+  max_hard_link_length = check_max_length(elements.map { _1[:hard_link] })
+  max_uid_length = check_max_length(elements.map { _1[:uid] })
+  max_gid_length = check_max_length(elements.map { _1[:gid] })
+  max_size_length = check_max_length(elements.map { _1[:size] })
+  elements.map do |element|
     [
       [
-        check_file_type(file[:stat].ftype),
-        owner_and_group_permission(file[:stat].setuid?, file_mode_number[0]),
-        owner_and_group_permission(file[:stat].setgid?, file_mode_number[1]),
-        other_users_permission(file[:stat].sticky?, file_mode_number[2])
+        element[:file_type],
+        element[:owner_permission],
+        element[:group_permission],
+        element[:other_users_permission]
       ].join,
-      file[:stat].nlink.to_s.rjust(max_sizes[:max_nlink_size] + 1),
-      Etc.getpwuid(file[:stat].uid).name.ljust(max_sizes[:max_size_owner_size] + 1),
-      Etc.getgrgid(file[:stat].gid).name.ljust(max_sizes[:max_size_group_size] + 1),
-      file[:stat].size.to_s.rjust(max_sizes[:max_file_size]),
-      format_mtime(file[:stat]),
-      file[:name],
-      show_symlink(file[:name])
+      element[:hard_link].rjust(max_hard_link_length + 1),
+      element[:uid].ljust(max_uid_length + 1),
+      element[:gid].ljust(max_gid_length + 1),
+      element[:size].rjust(max_size_length),
+      element[:mtime], element[:name], element[:symlink]
     ].join(' ').rstrip
   end
 end
