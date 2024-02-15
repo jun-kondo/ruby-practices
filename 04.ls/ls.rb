@@ -125,17 +125,6 @@ def other_users_permission(sticky, permission_number)
   end
 end
 
-def check_max_stat_sizes(stats)
-  max_size_owner = stats.max_by { |s| Etc.getpwuid(s.uid).name.size }
-  max_size_group = stats.max_by { |s| Etc.getgrgid(s.gid).name.size }
-  {
-    max_nlink_size: stats.max_by { |s| s.nlink.to_s.size }.nlink.to_s.size,
-    max_file_size: stats.max_by(&:size).size.to_s.size,
-    max_size_owner_size: Etc.getpwuid(max_size_owner.uid).name.size,
-    max_size_group_size: Etc.getgrgid(max_size_group.gid).name.size
-  }
-end
-
 def check_max_length(element)
   element.max_by(&:length).length
 end
