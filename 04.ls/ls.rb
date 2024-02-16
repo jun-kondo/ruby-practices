@@ -55,7 +55,7 @@ def long_listing(filenames)
   [total_block, long_list].join("\n")
 end
 
-def collect_elements(file_stats)
+def file_stats_for_long_format(file_stats)
   file_stats.map do |file|
     file_mode_number = file[:stat].mode.to_s(8).slice(-3, 3)
     {
