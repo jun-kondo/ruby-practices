@@ -48,7 +48,7 @@ def long_listing(filenames)
   file_stats = filenames.map do |filename|
     { name: filename, stat: File.lstat(filename) }
   end
-  elements = collect_elements(file_stats)
+  elements = file_stats_for_long_format(file_stats)
   long_list = generate_body(elements)
   total_block_number = elements.map { _1[:block] }.inject { |total, block| total + block }
   total_block = "total #{total_block_number}"
