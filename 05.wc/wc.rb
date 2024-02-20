@@ -3,67 +3,87 @@
 require 'optparse'
 
 class WcCommand
-  def initialize; end
-
-  def argv
-    {
-      options: ARGV.getopts('lwc'),
-      file_names: ARGV
-    }
-  end
-
   def main
-    options = argv[:options]
-    file_names = argv[:file_names]
-    counter_list = counter(file_names, options)
-    calc_total(counter_list).map do |list|
-      low = ['']
-      list[:count].each_value { |v| low << v.to_s.rjust(7) }
-      low << list[:file_name]
-      low.join(' ')
-    end.join("\n")
+    check_options
+    check_argv
+    counts = @file_names.empty? ? count_stdin_content : count_file_content
+    add_total_amount_low(counts) if counts.size > 1
+    display_lows(counts).join("\n")
   end
 
-  def calc_total(counter_list)
-    if counter_list.size > 1
-      total_amount = { file_name: 'total', count: {} }
-      counter_list.map do |low|
-        low[:count].each_key do |k|
-          total_amount[:count][k] = counter_list.map { _1[:count][k] }.inject(:+)
-        end
+  private
+
+  def check_options
+    @options = ARGV.getopts('lwc')
+  end
+
+  def check_argv
+    @file_names = ARGV
+  end
+
+  def check_stdin
+    $stdin.to_a
+  end
+
+  def add_total_amount_low(counts)
+    total_amount_low = { file_name: 'total', amount: {} }
+    counts.map do |count|
+      count[:amount].each_key do |k|
+        total_amount_low[:amount][k] = counts.map { _1[:amount][k] }.inject(:+)
       end
-      counter_list << total_amount
-    else
-      counter_list
     end
+    counts << total_amount_low
   end
 
-  def counter(file_names, options)
-    file_names.map do |file_name|
+  def count_file_content
+    @file_names.map do |file_name|
       File.open(file_name) do |f|
-        words = f.readlines
-        if options.value?(true)
-          optional_count(words, options, file_name)
-        else
-          {
-            file_name:,
-            count: {
-              line: words.map { |w| w.count("\n") }.inject(:+),
-              word: words.join.split.size,
-              byte: words.join.bytesize
-            }
-          }
-        end
+        contents = f.readlines
+        file_stat = { file_name: }
+        count_generate(contents, file_stat)
       end
     end
   end
 
-  def optional_count(words, options, file_name)
-    low = { file_name:, count: {} }
-    low[:count][:line] = words.map { |w| w.count("\n") }.inject(:+) if options['l']
-    low[:count][:word] = words.join.split.size if options['w']
-    low[:count][:byte] = words.join.bytesize if options['c']
-    low
+  def count_stdin_content
+    stdin = check_stdin
+    stdin_stat = {}
+    [count_generate(stdin, stdin_stat)]
+  end
+
+  def count_generate(contents, stat)
+    stat[:amount] = {}
+    if @options.value?(true)
+      count_line(contents, stat) if @options['l']
+      count_word(contents, stat) if @options['w']
+      count_byte(contents, stat) if @options['c']
+    else
+      count_line(contents, stat)
+      count_word(contents, stat)
+      count_byte(contents, stat)
+    end
+    stat
+  end
+
+  def count_line(contents, stat)
+    stat[:amount][:line] = contents.map { |w| w.count("\n") }.inject(:+)
+  end
+
+  def count_word(contents, stat)
+    stat[:amount][:word] = contents.join.split.size
+  end
+
+  def count_byte(contents, stat)
+    stat[:amount][:byte] = contents.join.bytesize
+  end
+
+  def display_lows(counts)
+    counts.map do |count|
+      low = ['']
+      count[:amount].each_value { |v| low << v.to_s.rjust(7) }
+      low << count[:file_name]
+      low.join(' ')
+    end
   end
 end
 
