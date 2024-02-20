@@ -34,7 +34,8 @@ def arrange_filenames(names)
 end
 
 def create_filenames_matrix(arranged_names, col: 3)
-  row = arranged_names.size <= col ? 1 : arranged_names.size / col + 1
+  file_quantity = arranged_names.size
+  row = (file_quantity % col).zero? ? file_quantity / col : file_quantity / col + 1
   arranged_names.each_slice(row).map { |divided_names| divided_names + Array.new((row - divided_names.size), '') }.transpose
 end
 
