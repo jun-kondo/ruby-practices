@@ -25,7 +25,7 @@ class WcCommand
     total_amount_low = { file_name: 'total', amount: {} }
     counts.map do |count|
       count[:amount].each_key do |k|
-        total_amount_low[:amount][k] = counts.map { _1[:amount][k] }.inject(:+)
+        total_amount_low[:amount][k] = counts.sum { _1[:amount][k] }
       end
     end
     counts << total_amount_low
@@ -62,7 +62,7 @@ class WcCommand
   end
 
   def count_line(contents, stat)
-    stat[:amount][:line] = contents.map { |w| w.count("\n") }.inject(:+)
+    stat[:amount][:line] = contents.sum { |w| w.count("\n") }
   end
 
   def count_word(contents, stat)
