@@ -17,10 +17,6 @@ class WcCommand
 
   private
 
-  def check_stdin
-    $stdin.to_a
-  end
-
   def add_total_amount_low(counts)
     total_amount_low = { file_name: 'total', amount: {} }
     counts.map do |count|
