@@ -31,40 +31,40 @@ class WcCommand
     @file_names.map do |file_name|
       File.open(file_name) do |f|
         contents = f.readlines
-        count_generate(contents, file_name)
+        generate_count(contents, file_name)
       end
     end
   end
 
   def count_stdin_content
     contents = $stdin.to_a
-    [count_generate(contents)]
+    [generate_count(contents)]
   end
 
-  def count_generate(contents, file_name = nil)
-    stat = { file_name:, amount: {} }
+  def generate_count(contents, file_name = nil)
+    count = { file_name:, amount: {} }
     if @options.value?(true)
-      count_line(contents, stat) if @options['l']
-      count_word(contents, stat) if @options['w']
-      count_byte(contents, stat) if @options['c']
+      count_line(contents, count) if @options['l']
+      count_word(contents, count) if @options['w']
+      count_byte(contents, count) if @options['c']
     else
-      count_line(contents, stat)
-      count_word(contents, stat)
-      count_byte(contents, stat)
+      count_line(contents, count)
+      count_word(contents, count)
+      count_byte(contents, count)
     end
-    stat
+    count
   end
 
-  def count_line(contents, stat)
-    stat[:amount][:line] = contents.sum { |w| w.count("\n") }
+  def count_line(contents, count)
+    count[:amount][:line] = contents.sum { |w| w.count("\n") }
   end
 
-  def count_word(contents, stat)
-    stat[:amount][:word] = contents.join.split.size
+  def count_word(contents, count)
+    count[:amount][:word] = contents.join.split.size
   end
 
-  def count_byte(contents, stat)
-    stat[:amount][:byte] = contents.join.bytesize
+  def count_byte(contents, count)
+    count[:amount][:byte] = contents.join.bytesize
   end
 
   def display_lows(counts)
