@@ -35,20 +35,18 @@ class WcCommand
     @file_names.map do |file_name|
       File.open(file_name) do |f|
         contents = f.readlines
-        file_stat = { file_name: }
-        count_generate(contents, file_stat)
+        count_generate(contents, file_name)
       end
     end
   end
 
   def count_stdin_content
-    stdin = check_stdin
-    stdin_stat = {}
-    [count_generate(stdin, stdin_stat)]
+    contents = $stdin.to_a
+    [count_generate(contents)]
   end
 
-  def count_generate(contents, stat)
-    stat[:amount] = {}
+  def count_generate(contents, file_name = nil)
+    stat = { file_name:, amount: {} }
     if @options.value?(true)
       count_line(contents, stat) if @options['l']
       count_word(contents, stat) if @options['w']
