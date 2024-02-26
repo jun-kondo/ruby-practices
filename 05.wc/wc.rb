@@ -9,7 +9,7 @@ class WcCommand
     @file_names = ARGV
   end
 
-  def main
+  def display_word_count
     counts = @file_names.empty? ? count_stdin_content : count_file_content
     add_total_amount_low(counts) if counts.size > 1
     display_lows(counts).join("\n")
@@ -82,4 +82,4 @@ class WcCommand
 end
 
 wc = WcCommand.new
-puts wc.main
+puts wc.display_word_count
