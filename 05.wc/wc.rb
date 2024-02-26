@@ -4,23 +4,18 @@
 require 'optparse'
 
 class WcCommand
+  def initialize
+    @options = ARGV.getopts('lwc')
+    @file_names = ARGV
+  end
+
   def main
-    check_options
-    check_argv
     counts = @file_names.empty? ? count_stdin_content : count_file_content
     add_total_amount_low(counts) if counts.size > 1
     display_lows(counts).join("\n")
   end
 
   private
-
-  def check_options
-    @options = ARGV.getopts('lwc')
-  end
-
-  def check_argv
-    @file_names = ARGV
-  end
 
   def check_stdin
     $stdin.to_a
