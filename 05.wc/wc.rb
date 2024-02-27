@@ -29,10 +29,8 @@ class WcCommand
 
   def count_file_content
     @file_names.map do |file_name|
-      File.open(file_name) do |f|
-        contents = f.readlines
-        generate_count(contents, file_name)
-      end
+      contents = File.readlines(file_name)
+      generate_count(contents, file_name)
     end
   end
 
