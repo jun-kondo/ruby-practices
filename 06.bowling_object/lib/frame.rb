@@ -3,10 +3,9 @@
 require_relative 'shot'
 
 class Frame
-  def initialize(*marks)
-    @first_shot = Shot.new(marks[0])
-    @second_shot = Shot.new(marks[1])
-    # @third_shot = Shot.new(marks[2])
+  def initialize(shots)
+    @first_shot = Shot.new(shots[0])
+    @second_shot = Shot.new(shots[1])
   end
 
   def score

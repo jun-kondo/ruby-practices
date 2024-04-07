@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 class Shot
-  def initialize(mark)
-    @mark = mark
-  end
+  attr_reader :score
 
-  def score
-    # return 10 if @mark == 'X'
-    #
-    # @mark.to_i
-    @mark
+  def initialize(score)
+    @score = score
   end
 end
