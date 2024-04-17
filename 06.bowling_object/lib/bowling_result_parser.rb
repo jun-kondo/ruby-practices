@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class BowlingResultParser
+  STRIKE_MARK = 'X'
+  STRIKE_SCORE = 10
+  AFTER_STRIKE = 0
   def initialize(result)
     @result = result
   end
@@ -8,9 +11,9 @@ class BowlingResultParser
   def parse_result
     all_pins = []
     @result.split(',').each do |mark|
-      if mark == 'X'
-        all_pins << 10
-        all_pins << 0
+      if mark == STRIKE_MARK
+        all_pins << STRIKE_SCORE
+        all_pins << AFTER_STRIKE
       else
         all_pins << mark.to_i
       end
