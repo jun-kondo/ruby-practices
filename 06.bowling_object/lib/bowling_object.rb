@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 require_relative 'game'
-require_relative 'mark_parser'
+require_relative 'bowling_result_parser'
 
-frames = MarkParser.new(ARGV[0]).parse_mark
-game = Game.new(frames)
+parsed_result = BowlingResultParser.new(ARGV[0]).parse_result
+game = Game.new(parsed_result)
 puts game.score
