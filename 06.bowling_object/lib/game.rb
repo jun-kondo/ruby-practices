@@ -9,17 +9,17 @@ class Game
 
   def score
     score = 0
-    @frames.each_with_index do |frame, index|
+    10.times do |index|
       score +=
-        if frame.strike?
-          strike_bonus(index) + 10
-        elsif frame.spare?
-          spare_bonus(index) + 10
+        if @frames[index].strike?
+          strike_bonus(index) + @frames[index].score
+        elsif @frames[index].spare?
+          spare_bonus(index) + @frames[index].score
         else
-          frame.score
+          @frames[index].score
         end
-      break score if index == 9
     end
+    score
   end
 
   private
