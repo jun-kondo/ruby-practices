@@ -3,6 +3,7 @@
 # require_relative 'shot'
 
 class Frame
+  STRIKE_SCORE = 10
   def initialize(shots)
     @first_shot = shots[0]
     @second_shot = shots[1]
@@ -17,10 +18,10 @@ class Frame
   end
 
   def strike?
-    @first_shot == 10
+    @first_shot == STRIKE_SCORE
   end
 
   def spare?
-    (@first_shot + @second_shot) == 10
+    (@first_shot + @second_shot) == STRIKE_SCORE
   end
 end
