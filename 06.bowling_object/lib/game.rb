@@ -3,8 +3,8 @@
 require_relative 'frame'
 
 class Game
-  def initialize(result)
-    @frames = result.map { |shots| Frame.new(shots) }
+  def initialize(results)
+    @frames = results.map { |shots| Frame.new(shots) }
   end
 
   def score
