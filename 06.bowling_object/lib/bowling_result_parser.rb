@@ -21,8 +21,9 @@ class BowlingResultParser
   private
 
   def separate(all_pins)
-    separated_pins = []
-    all_pins.each_slice(2) { |pins| separated_pins << pins }
-    separated_pins
+    # separated_pins = []
+    # all_pins.each_slice(2) { |pins| separated_pins << pins }
+    all_pins.each_slice(2).to_a
+    # separated_pins
   end
 end
