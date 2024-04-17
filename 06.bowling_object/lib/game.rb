@@ -10,14 +10,12 @@ class Game
   def score
     score = 0
     10.times do |index|
-      score +=
-        if @frames[index].strike?
-          strike_bonus(index) + @frames[index].score
-        elsif @frames[index].spare?
-          spare_bonus(index) + @frames[index].score
-        else
-          @frames[index].score
-        end
+      if @frames[index].strike?
+        score += strike_bonus(index)
+      elsif @frames[index].spare?
+        score += spare_bonus(index)
+      end
+      score += @frames[index].score
     end
     score
   end
