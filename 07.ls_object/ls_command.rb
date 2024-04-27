@@ -9,34 +9,39 @@ class LsCommand
   NO_FLAGS = 0
 
   def initialize(argv)
-    @options = argv.getopts('arl')
+    @argv = argv
   end
 
-  def run
-    decide_format.new(filenames).output
+  # def run
+  #   # クラス間の従属関係になってるので外に出す
+  #   format_mode.new(filenames_order).output
+  # end
+
+  def format_mode
+    options['l'] ? LongFormat : ShortFormat
+  end
+
+  def filenames_order
+    options['r'] ? filenames.reverse : filenames
   end
 
   private
 
-  # def argument_and_options(argv)
-  #   options = argv.getopts('arl')
-  #   # argv要らないと思う。
-  #   [argv, options]
-  # end
-
-  def decide_format
-    @options['l'] ? LongFormat : ShortFormat
-  end
-
   # これをdirectoryクラスに移しては?
   def filenames
     # filenames = Dir.glob('*', flags, base: base_directory_path)
-    filenames = Dir.glob('*', flags)
-    @options['r'] ? filenames.reverse : filenames
+    Dir.glob('*', flags)
+  end
+
+  def options
+    @argv.getopts('arl')
+    # options = argv.getopts('arl')
+    # argv要らないと思う。
+    # [argv, options]
   end
 
   def flags
-    @options['a'] ? File::FNM_DOTMATCH : NO_FLAGS
+    options['a'] ? File::FNM_DOTMATCH : NO_FLAGS
   end
 
   # def directory_path(argv)

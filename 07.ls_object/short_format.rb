@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class ShortFormat
-  COL_SIZE = 3
+  COL_COUNT = 3
   # SPACE_CHARACTER = ' '
   # SPACE_CHAR_COUNT_BETWEEN_FILENAMES = 1
 
   def initialize(filenames)
     @filenames = filenames
+    @file_count = filenames.size
   end
 
   def output
@@ -17,23 +18,24 @@ class ShortFormat
   private
 
   def create_filenames_matrix(arranged_names)
-    arranged_names.each_slice(row_size).map { |divided_names| divided_names + Array.new((row_size - divided_names.size), '') }.transpose
+    arranged_names.each_slice(row_count).map { |divided_names| divided_names + Array.new((row_count - divided_names.size), '') }.transpose
   end
 
-  def row_size
-    file_size = @filenames.size
-    @row_size ||= (file_size % COL_SIZE).zero? ? file_size / COL_SIZE : file_size.fdiv(COL_SIZE).ceil
+  def row_count
+    @row_count ||= (@file_count % COL_COUNT).zero? ? @file_count / COL_COUNT : @file_count.fdiv(COL_COUNT).ceil
   end
 
   def arrange_filenames
     @filenames.map { |filename| multibyte_ljust(filename) }
   end
 
+  # filenameクラスに出来そう
   def multibyte_ljust(filename, padding: ' ')
-    filename + padding * ljust_padding_count(filename)
+    filename + padding * padding_size(filename)
   end
 
-  def ljust_padding_count(filename)
+  # filenameクラスに出来そう
+  def padding_size(filename)
     max_length_filename_width - display_file_width(filename)
   end
 
@@ -42,9 +44,10 @@ class ShortFormat
   end
 
   def max_length_filename
-    @max_length_filename ||= @filenames.max_by { |a| display_file_width(a) }
+    @filenames.max_by { |filename| display_file_width(filename) }
   end
 
+  # filenameクラスに出来そう
   def display_file_width(filename)
     filename.size + filename.chars.count { |char| !char.ascii_only? }
   end

@@ -2,5 +2,7 @@
 # frozen_string_literal: true
 
 require_relative 'ls_command'
+require_relative 'short_format'
 
-puts LsCommand.new(ARGV).run
+ls = LsCommand.new(ARGV)
+puts ls.format_mode.new(ls.filenames_order).output
