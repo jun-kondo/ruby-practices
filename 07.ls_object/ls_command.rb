@@ -34,7 +34,7 @@ class LsCommand
   end
 
   def options
-    @argv.getopts('arl')
+    @options ||= @argv.getopts('arl')
     # options = argv.getopts('arl')
     # argv要らないと思う。
     # [argv, options]
