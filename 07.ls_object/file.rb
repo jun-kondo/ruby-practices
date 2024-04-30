@@ -66,21 +66,6 @@ module Ls
       [file_type, owner_permission_triad, group_permission_triad, other_users_permission_triad].join
     end
 
-    # 命名要検討
-    # def other_users_permission
-    #   three_permission_chars = change_to_symbolic_notation(@mode_number[2]).dup
-    #   if @stat.sticky? && three_permission_chars[2] == EXECUTABLE
-    #     three_permission_chars[2] = 't'
-    #     # three_permission_chars.sub(/x/, 't')
-    #   elsif @stat.sticky?
-    #     three_permission_chars[2] = 'T'
-    #     # xしか想定してないが、r,wが-だとそこもTになってしまう
-    #     # three_permission_chars.sub(/-/, 'T')
-    #   else
-    #     three_permission_chars
-    #   end
-    # end
-
     def extended_attributes_notation
       SPACE_CHARACTER # 実装できなかったので空白文字で代用
     end
@@ -116,12 +101,10 @@ module Ls
       FILETYPE_SYMBOLIC_NOTATION[stat.ftype]
     end
 
-    # 命名要検討
     def owner_permission_triad
       change_to_symbolic_notation(stat.setuid?, mode_number[0], 'set_id')
     end
 
-    # 命名要検討
     def group_permission_triad
       change_to_symbolic_notation(stat.setgid?, mode_number[1], 'set_id')
     end
@@ -131,22 +114,14 @@ module Ls
     end
 
     def change_to_symbolic_notation(is_set_id_or_sticky, permission_number, special_permission_type)
-      # three_permission_chars = change_to_symbolic_notation(permission_number).dup
       three_permission_chars = THREE_PERMISSION_TRIADS[permission_number].dup
       if is_set_id_or_sticky && three_permission_chars[2] == EXECUTABLE
         three_permission_chars[2] = SPECIAL_PERMISSION[special_permission_type]['executable']
-        # three_permission_chars.sub(/x/, 's')
       elsif is_set_id_or_sticky
         three_permission_chars[2] = SPECIAL_PERMISSION[special_permission_type]['not_executable']
-        # xしか想定してないが、r,wが-だとそこもSになってしまう
-        # three_permission_chars.sub(/-/, 'S')
       else
         three_permission_chars
       end
     end
-
-    # def change_to_symbolic_notation(permission_number)
-    #   THREE_PERMISSION_TRIADS[permission_number]
-    # end
   end
 end
