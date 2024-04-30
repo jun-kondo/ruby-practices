@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'etc'
+require 'date'
 
 module Ls
   class File
@@ -15,7 +16,6 @@ module Ls
       'link' => 'l',
       'socket' => 's'
     }.freeze
-
     THREE_PERMISSION_TRIADS =
       {
         '7' => 'rwx',
@@ -27,79 +27,117 @@ module Ls
         '1' => '--x',
         '0' => '---'
       }.freeze
-
+    SPECIAL_PERMISSION =
+      {
+        'set_id' => {
+          'executable' => 's',
+          'not_executable' => 'S'
+        },
+        'sticky_bit' => {
+          'executable' => 't',
+          'not_executable' => 'T'
+        }
+      }.freeze
     EXECUTABLE = 'x'
+    SPACE_CHARACTER = ' '
+    HALF_YEAR = 6
 
-    def initialize(filename)
-      @name = filename
-      @stat = File.lstat(filename)
-      @mode_number = @stat.mode.to_s(8).slice(-3, 3)
+    def initialize(name)
+      @name = name
     end
 
-    def block
-      @stat.blocks
+    def display_name_width
+      @name.size + @name.chars.count { |char| !char.ascii_only? }
     end
 
-    def file_type
-      FILETYPE_SYMBOLIC_NOTATION[@stat.ftype]
+    def stat
+      @stat ||= ::File.lstat(@name)
     end
 
-    def owner_permission
-      owner_and_group_permission(@stat.setuid?, @mode_number[0])
+    def mode_number
+      @mode_number ||= stat.mode.to_s(8).slice(-3, 3)
     end
 
-    def group_permission
-      owner_and_group_permission(@stat.setgid?, @mode_number[1])
+    def block_count
+      stat.blocks
     end
 
-    def other_users_permission
-      three_permission_chars = change_to_symbolic_notation(@mode_number[2]).dup
-      if @stat.sticky? && three_permission_chars[2] == EXECUTABLE
-        three_permission_chars[2] = 't'
-        # three_permission_chars.sub(/x/, 't')
-      elsif @stat.sticky?
-        three_permission_chars[2] = 'T'
-        # xしか想定してないが、r,wが-だとそこもTになってしまう
-        # three_permission_chars.sub(/-/, 'T')
-      else
-        three_permission_chars
-      end
+    def file_type_and_all_permissions
+      [file_type, owner_permission_triad, group_permission_triad, other_users_permission_triad].join
+    end
+
+    # 命名要検討
+    # def other_users_permission
+    #   three_permission_chars = change_to_symbolic_notation(@mode_number[2]).dup
+    #   if @stat.sticky? && three_permission_chars[2] == EXECUTABLE
+    #     three_permission_chars[2] = 't'
+    #     # three_permission_chars.sub(/x/, 't')
+    #   elsif @stat.sticky?
+    #     three_permission_chars[2] = 'T'
+    #     # xしか想定してないが、r,wが-だとそこもTになってしまう
+    #     # three_permission_chars.sub(/-/, 'T')
+    #   else
+    #     three_permission_chars
+    #   end
+    # end
+
+    def extended_attributes_notation
+      SPACE_CHARACTER # 実装できなかったので空白文字で代用
     end
 
     def hard_link
-      @stat.nlink.to_s
+      @hard_link ||= stat.nlink.to_s
     end
 
-    def uid
-      Etc.getpwuid(@stat.uid).name
+    def uid_name
+      @uid_name ||= Etc.getpwuid(stat.uid).name
     end
 
-    def gid
-      Etc.getgrgid(@stat.gid).name
+    def gid_name
+      @gid_name ||= Etc.getgrgid(stat.gid).name
     end
 
     def size
-      @stat.size.to_s
+      @size ||= stat.size.to_s
     end
 
     def last_modified_on
-      date_modified = @stat.mtime
-      Date.parse(date_modified.to_s) < Date.today << 6 ? date_modified.strftime('%_m %_d %_5Y') : date_modified.strftime('%_m %_d %H:%M')
+      date_modified = stat.mtime
+      Date.parse(date_modified.to_s) < Date.today << HALF_YEAR ? date_modified.strftime('%_m %_d %_5Y') : date_modified.strftime('%_m %_d %H:%M')
     end
 
     def symbolic_link
-      File.readlink(@name) if FileTest.symlink?(@name)
+      "-> #{::File.readlink(@name)}" if FileTest.symlink?(@name)
     end
 
     private
 
-    def owner_and_group_permission(set_id, permission_number)
-      three_permission_chars = change_to_symbolic_notation(permission_number).dup
-      if set_id && three_permission_chars[2] == EXECUTABLE
-        three_permission_chars[2] = 's'
+    def file_type
+      FILETYPE_SYMBOLIC_NOTATION[stat.ftype]
+    end
+
+    # 命名要検討
+    def owner_permission_triad
+      change_to_symbolic_notation(stat.setuid?, mode_number[0], 'set_id')
+    end
+
+    # 命名要検討
+    def group_permission_triad
+      change_to_symbolic_notation(stat.setgid?, mode_number[1], 'set_id')
+    end
+
+    def other_users_permission_triad
+      change_to_symbolic_notation(stat.sticky?, mode_number[2], 'sticky_bit')
+    end
+
+    def change_to_symbolic_notation(is_set_id_or_sticky, permission_number, special_permission_type)
+      # three_permission_chars = change_to_symbolic_notation(permission_number).dup
+      three_permission_chars = THREE_PERMISSION_TRIADS[permission_number].dup
+      if is_set_id_or_sticky && three_permission_chars[2] == EXECUTABLE
+        three_permission_chars[2] = SPECIAL_PERMISSION[special_permission_type]['executable']
         # three_permission_chars.sub(/x/, 's')
-      elsif set_id
-        three_permission_chars[2] = 'S'
+      elsif is_set_id_or_sticky
+        three_permission_chars[2] = SPECIAL_PERMISSION[special_permission_type]['not_executable']
         # xしか想定してないが、r,wが-だとそこもSになってしまう
         # three_permission_chars.sub(/-/, 'S')
       else
@@ -107,8 +145,8 @@ module Ls
       end
     end
 
-    def change_to_symbolic_notation(permission_number)
-      THREE_PERMISSION_TRIADS[permission_number]
-    end
+    # def change_to_symbolic_notation(permission_number)
+    #   THREE_PERMISSION_TRIADS[permission_number]
+    # end
   end
 end
