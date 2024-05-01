@@ -10,7 +10,7 @@ class LsCommand
   end
 
   def format_mode
-    options['l'] ? LongFormat : ShortFormat
+    options['l'] ? LsLongFormat : LsShortFormat
   end
 
   def filenames_order

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ShortFormat
+class LsShortFormat
   COL_COUNT = 3
 
   def initialize(files)

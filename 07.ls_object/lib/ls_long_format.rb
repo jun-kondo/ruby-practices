@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LongFormat
+class LsLongFormat
   def initialize(files)
     @files = files
   end
@@ -8,6 +8,8 @@ class LongFormat
   def output
     [total_block, generate_long_format_matrix].join("\n")
   end
+
+  private
 
   def total_block
     "total #{total_block_count}"
