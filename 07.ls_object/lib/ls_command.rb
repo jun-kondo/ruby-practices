@@ -9,7 +9,7 @@ class LsCommand
     @argv = argv
   end
 
-  def format_mode
+  def format_mode_class
     options['l'] ? LsLongFormat : LsShortFormat
   end
 
