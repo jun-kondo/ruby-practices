@@ -82,7 +82,7 @@ class LsFile
     "-> #{File.readlink(@name)}" if FileTest.symlink?(@name)
   end
 
-  # private
+  private
 
   def display_name_width
     @name.size + @name.chars.count { |char| !char.ascii_only? }
