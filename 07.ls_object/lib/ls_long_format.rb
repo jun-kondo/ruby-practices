@@ -40,19 +40,19 @@ class LsLongFormat
   end
 
   def max_hard_link_length
-    @max_hard_link_length ||= check_max_length(@files.map(&:hard_link))
+    check_max_length(@files.map(&:hard_link))
   end
 
   def max_uid_name_length
-    @max_uid_name_length ||= check_max_length(@files.map(&:uid_name))
+    check_max_length(@files.map(&:uid_name))
   end
 
   def max_gid_name_length
-    @max_gid_name_length ||= check_max_length(@files.map(&:gid_name))
+    check_max_length(@files.map(&:gid_name))
   end
 
   def max_size_length
-    @max_size_length ||= check_max_length(@files.map(&:size))
+    check_max_length(@files.map(&:size))
   end
 
   def check_max_length(strings)

@@ -58,19 +58,19 @@ class LsFile
   end
 
   def hard_link
-    @hard_link ||= stat.nlink.to_s
+    stat.nlink.to_s
   end
 
   def uid_name
-    @uid_name ||= Etc.getpwuid(stat.uid).name
+    Etc.getpwuid(stat.uid).name
   end
 
   def gid_name
-    @gid_name ||= Etc.getgrgid(stat.gid).name
+    Etc.getgrgid(stat.gid).name
   end
 
   def size
-    @size ||= stat.size.to_s
+    stat.size.to_s
   end
 
   def last_modified_on
@@ -82,18 +82,18 @@ class LsFile
     "-> #{File.readlink(@name)}" if FileTest.symlink?(@name)
   end
 
-  private
-
   def display_name_width
     @name.size + @name.chars.count { |char| !char.ascii_only? }
   end
 
+  private
+
   def stat
-    @stat ||= File.lstat(@name)
+    File.lstat(@name)
   end
 
   def mode_number
-    @mode_number ||= stat.mode.to_s(8).slice(-3, 3)
+    stat.mode.to_s(8).slice(-3, 3)
   end
 
   def file_type
