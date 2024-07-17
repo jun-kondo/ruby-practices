@@ -8,4 +8,4 @@ require_relative 'lib/ls_long_format'
 
 ls = LsCommand.new(ARGV)
 files = ls.filenames_order.map { |filename| LsFile.new(filename) }
-puts ls.format_class.new(files).output
+puts ls.format_class_new(files).output

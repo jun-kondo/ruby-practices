@@ -9,8 +9,8 @@ class LsCommand
     @argv = argv
   end
 
-  def format_class
-    options['l'] ? LsLongFormat : LsShortFormat
+  def format_class_new(files, col_count: 3)
+    options['l'] ? LsLongFormat.new(files) : LsShortFormat.new(files, col_count)
   end
 
   def filenames_order

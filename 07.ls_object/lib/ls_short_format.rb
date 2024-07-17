@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 class LsShortFormat
-  COL_COUNT = 3
 
-  def initialize(files)
+  def initialize(files, col_count)
     @files = files
     @file_count = files.size
+    @col_count = col_count
   end
 
   def output
