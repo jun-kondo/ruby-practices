@@ -23,7 +23,7 @@ class LsShortFormat
   end
 
   def row_count
-    (@file_count % @col_count).zero? ? @file_count / @col_count : @file_count.fdiv(@col_count).ceil
+    @row_count ||= (@file_count % @col_count).zero? ? @file_count / @col_count : @file_count.fdiv(@col_count).ceil
   end
 
   def generate_filenames_row(filenames)
@@ -39,7 +39,7 @@ class LsShortFormat
   end
 
   def max_length_filename_width
-    max_name_length_file.display_name_width
+    @max_length_filename_width ||= max_name_length_file.display_name_width
   end
 
   def max_name_length_file

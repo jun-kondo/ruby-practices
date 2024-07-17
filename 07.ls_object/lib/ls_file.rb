@@ -58,19 +58,19 @@ class LsFile
   end
 
   def hard_link
-    stat.nlink.to_s
+    @hard_link ||= stat.nlink.to_s
   end
 
   def uid_name
-    Etc.getpwuid(stat.uid).name
+    @uid_name ||= Etc.getpwuid(stat.uid).name
   end
 
   def gid_name
-    Etc.getgrgid(stat.gid).name
+    @gid_name ||= Etc.getgrgid(stat.gid).name
   end
 
   def size
-    stat.size.to_s
+    @size ||= stat.size.to_s
   end
 
   def last_modified_on
@@ -89,11 +89,11 @@ class LsFile
   private
 
   def stat
-    File.lstat(@name)
+    @stat ||= File.lstat(@name)
   end
 
   def mode_number
-    stat.mode.to_s(8).slice(-3, 3)
+    @mode_number ||= stat.mode.to_s(8).slice(-3, 3)
   end
 
   def file_type
