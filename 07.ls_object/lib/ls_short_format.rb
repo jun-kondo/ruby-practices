@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class LsShortFormat
-
   def initialize(files, col_count)
     @files = files
     @file_count = files.size
