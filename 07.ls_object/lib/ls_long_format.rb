@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class LsLongFormat
+  INITIAL_LENGTH_VALUE = 0
+
   def initialize(files)
     @files = files
+    @max_lengths = calculate_max_lengths
   end
 
   def output
@@ -29,31 +32,28 @@ class LsLongFormat
         file.file_type_and_all_permissions,
         file.extended_attributes_notation
       ].join,
-      file.hard_link.rjust(max_lengths[:hard_link]),
+      file.hard_link.rjust(@max_lengths[:hard_link]),
       [
-        file.uid_name.ljust(max_lengths[:uid_name]),
-        file.gid_name.ljust(max_lengths[:gid_name]),
-        file.size.rjust(max_lengths[:size])
+        file.uid_name.ljust(@max_lengths[:uid_name]),
+        file.gid_name.ljust(@max_lengths[:gid_name]),
+        file.size.rjust(@max_lengths[:size])
       ].join('  '),
       file.last_modified_on, file.name, file.symbolic_link
     ].join(' ').rstrip
   end
 
-  def max_lengths
-    @max_lengths ||= begin
-      max_lengths = {
-        hard_link: 0,
-        uid_name: 0,
-        gid_name: 0,
-        size: 0
-      }
-      @files.each_with_object(max_lengths) do |file, lengths|
-        update_max_length(lengths, :hard_link, file.hard_link)
-        update_max_length(lengths, :uid_name, file.uid_name)
-        update_max_length(lengths, :gid_name, file.gid_name)
-        update_max_length(lengths, :size, file.size)
-      end
-      max_lengths
+  def calculate_max_lengths
+    max_lengths = {
+      hard_link: INITIAL_LENGTH_VALUE,
+      uid_name: INITIAL_LENGTH_VALUE,
+      gid_name: INITIAL_LENGTH_VALUE,
+      size: INITIAL_LENGTH_VALUE
+    }
+    @files.each_with_object(max_lengths) do |file, lengths|
+      update_max_length(lengths, :hard_link, file.hard_link)
+      update_max_length(lengths, :uid_name, file.uid_name)
+      update_max_length(lengths, :gid_name, file.gid_name)
+      update_max_length(lengths, :size, file.size)
     end
   end
 
