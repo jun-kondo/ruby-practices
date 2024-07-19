@@ -47,13 +47,17 @@ class LsLongFormat
         gid_name: 0,
         size: 0
       }
-      @files.each do |file|
-        max_lengths[:hard_link] = [max_lengths[:hard_link], file.hard_link.length].max
-        max_lengths[:uid_name] = [max_lengths[:uid_name], file.uid_name.length].max
-        max_lengths[:gid_name] = [max_lengths[:gid_name], file.gid_name.length].max
-        max_lengths[:size] = [max_lengths[:size], file.size.length].max
+      @files.each_with_object(max_lengths) do |file, lengths|
+        update_max_length(lengths, :hard_link, file.hard_link)
+        update_max_length(lengths, :uid_name, file.uid_name)
+        update_max_length(lengths, :gid_name, file.gid_name)
+        update_max_length(lengths, :size, file.size)
       end
       max_lengths
     end
+  end
+
+  def update_max_length(lengths, key, value)
+    lengths[key] = [lengths[key], value.length].max
   end
 end
